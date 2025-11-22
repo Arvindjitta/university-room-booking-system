@@ -9,4 +9,8 @@ class Config:
     DB_USER = os.environ.get('DB_USER', 'root')
     DB_PASSWORD = os.environ.get('DB_PASSWORD', '')
     DB_NAME = os.environ.get('DB_NAME', 'university_booking')
-    DB_PORT = os.environ.get('DB_PORT', 3306)
+    # Parse DB_PORT as integer, fallback to 3306 if invalid
+    try:
+        DB_PORT = int(os.environ.get('DB_PORT', 3306))
+    except (ValueError, TypeError):
+        DB_PORT = 3306
