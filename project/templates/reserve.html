@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2>Make a Reservation</h2>
+<div class="row mt-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('reservation.reserve') }}">
+                    <div class="mb-3">
+                        <label for="room_id" class="form-label">Select Room</label>
+                        <select class="form-select" id="room_id" name="room_id" required>
+                            <option value="" selected disabled>Choose a room...</option>
+                            {% for room in rooms %}
+                            <option value="{{ room.id }}" {% if request.args.get('room_id')|int==room.id %}selected{%
+                                endif %}>
+                                {{ room.room_name }} ({{ room.room_type }}, Cap: {{ room.capacity }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="slot_id" class="form-label">Select Timeslot</label>
+                        <select class="form-select" id="slot_id" name="slot_id" required>
+                            <option value="" selected disabled>Choose a time...</option>
+                            {% for slot in slots %}
+                            <option value="{{ slot.id }}">
+                                {{ slot.slot_date }} | {{ slot.start_time }} - {{ slot.end_time }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="purpose" class="form-label">Purpose of Reservation</label>
+                        <textarea class="form-control" id="purpose" name="purpose" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Reservation</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

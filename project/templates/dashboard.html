@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="jumbotron text-center bg-light p-5 rounded">
+    <h1 class="display-4">Welcome to UniBooking</h1>
+    <p class="lead">The easiest way to book rooms and manage events on campus.</p>
+    <hr class="my-4">
+    {% if session.get('role') == 'admin' %}
+    <p>You have admin privileges. Manage approvals, rooms, and timeslots.</p>
+    <a class="btn btn-primary btn-lg" href="{{ url_for('admin.approvals') }}" role="button">Manage Approvals</a>
+    {% else %}
+    <p>Browse available rooms and make a reservation today.</p>
+    <a class="btn btn-primary btn-lg" href="{{ url_for('reservation.reserve') }}" role="button">Book a Room</a>
+    {% endif %}
+</div>
+{% endblock %}

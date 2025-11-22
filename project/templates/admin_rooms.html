@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2>Manage Rooms</h2>
+
+<div class="card my-4">
+    <div class="card-header">Add New Room</div>
+    <div class="card-body">
+        <form method="POST" class="row g-3">
+            <div class="col-md-3">
+                <input type="text" class="form-control" name="name" placeholder="Room Name" required>
+            </div>
+            <div class="col-md-2">
+                <input type="number" class="form-control" name="capacity" placeholder="Capacity" required>
+            </div>
+            <div class="col-md-3">
+                <input type="text" class="form-control" name="type" placeholder="Type (e.g. Lab)" required>
+            </div>
+            <div class="col-md-3">
+                <input type="text" class="form-control" name="location" placeholder="Location" required>
+            </div>
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-primary w-100">Add</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<h3>Existing Rooms</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Capacity</th>
+            <th>Type</th>
+            <th>Location</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for room in rooms %}
+        <tr>
+            <td>{{ room.room_name }}</td>
+            <td>{{ room.capacity }}</td>
+            <td>{{ room.room_type }}</td>
+            <td>{{ room.location }}</td>
+            <td>
+                <form method="POST" onsubmit="return confirm('Are you sure?');">
+                    <input type="hidden" name="delete" value="true">
+                    <input type="hidden" name="room_id" value="{{ room.id }}">
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

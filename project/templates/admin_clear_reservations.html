@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2>Clear Reservations</h2>
+
+<div class="alert alert-warning mt-4" role="alert">
+    <strong>⚠️ Warning:</strong> Deletion actions are permanent and cannot be undone!
+</div>
+
+<!-- Safe Operations -->
+<div class="card mt-4">
+    <div class="card-header bg-info text-white">
+        <h5>Safe Cleanup Operations</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <h6>Clear Cancelled Reservations</h6>
+                <p class="text-muted">Removes only reservations with status = 'cancelled'</p>
+                <form method="POST" style="display:inline;">
+                    <input type="hidden" name="action" value="clear_cancelled">
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-trash"></i> Clear Cancelled
+                    </button>
+                </form>
+            </div>
+            <div class="col-md-6 mb-3">
+                <h6>Clear Rejected Reservations</h6>
+                <p class="text-muted">Removes only reservations with status = 'rejected'</p>
+                <form method="POST" style="display:inline;">
+                    <input type="hidden" name="action" value="clear_rejected">
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-trash"></i> Clear Rejected
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Danger Zone -->
+<div class="card mt-4 border-danger">
+    <div class="card-header bg-danger text-white">
+        <h5>⚠️ Danger Zone</h5>
+    </div>
+    <div class="card-body">
+        <h6>Clear All Reservations</h6>
+        <p class="text-muted">
+            This will permanently delete <strong>ALL</strong> reservations and approvals from the database.
+            This action cannot be undone!
+        </p>
+        <form method="POST" id="clearAllForm">
+            <input type="hidden" name="action" value="clear_all">
+            <button type="button" class="btn btn-danger" onclick="confirmClearAll()">
+                <i class="bi bi-exclamation-triangle"></i> Clear All Reservations
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function confirmClearAll() {
+        if (confirm('⚠️ WARNING: Are you absolutely sure you want to delete ALL reservations?\n\nThis action cannot be undone!')) {
+            document.getElementById('clearAllForm').submit();
+        }
+    }
+</script>
+
+<div class="mt-4">
+    <a href="{{ url_for('reservation.dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+{% endblock %}

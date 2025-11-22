@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2>Reservation Approvals</h2>
+<div class="table-responsive mt-4">
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>User</th>
+                <th>Room</th>
+                <th>Date/Time</th>
+                <th>Purpose</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for res in reservations %}
+            <tr>
+                <td>{{ res.user_name }}</td>
+                <td>{{ res.room_name }}</td>
+                <td>{{ res.slot_date }}<br>{{ res.start_time }} - {{ res.end_time }}</td>
+                <td>{{ res.purpose }}</td>
+                <td>
+                    <span
+                        class="badge bg-{{ 'success' if res.status == 'approved' else 'warning' if res.status == 'pending' else 'danger' }}">
+                        {{ res.status|upper }}
+                    </span>
+                </td>
+                <td>
+                    {% if res.status == 'pending' %}
+                    <form method="POST" action="{{ url_for('admin.approve_reservation', res_id=res.id) }}"
+                        class="d-inline">
+                        <input type="hidden" name="action" value="approve">
+                        <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('admin.approve_reservation', res_id=res.id) }}"
+                        class="d-inline">
+                        <input type="hidden" name="action" value="reject">
+                        <input type="text" name="notes" placeholder="Reason"
+                            class="form-control form-control-sm d-inline w-auto" required>
+                        <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                    </form>
+                    {% else %}
+                    <span class="text-muted">No actions</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="text-center">No reservations found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

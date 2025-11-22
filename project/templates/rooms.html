@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2>Available Rooms</h2>
+<div class="row mt-4">
+    {% for room in rooms %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ room.room_name }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{ room.room_type }}</h6>
+                <p class="card-text">
+                    <strong>Capacity:</strong> {{ room.capacity }}<br>
+                    <strong>Location:</strong> {{ room.location }}
+                </p>
+                {% if session.get('role') == 'student' and room.capacity > 10 %}
+                <button class="btn btn-secondary" disabled>Faculty Only</button>
+                {% else %}
+                <a href="{{ url_for('reservation.reserve') }}?room_id={{ room.id }}"
+                    class="btn btn-outline-primary">Book This Room</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <div class="alert alert-info">No rooms found.</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

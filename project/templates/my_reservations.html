@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2>My Reservations</h2>
+<div class="table-responsive mt-4">
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Room</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Purpose</th>
+                <th>Status</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for res in reservations %}
+            <tr>
+                <td>{{ res.room_name }}</td>
+                <td>{{ res.slot_date }}</td>
+                <td>{{ res.start_time }} - {{ res.end_time }}</td>
+                <td>{{ res.purpose }}</td>
+                <td>
+                    <span
+                        class="badge bg-{{ 'success' if res.status == 'approved' else 'warning' if res.status == 'pending' else 'danger' }}">
+                        {{ res.status|upper }}
+                    </span>
+                </td>
+                <td>{{ res.created_at }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="text-center">No reservations found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
