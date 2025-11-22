@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2>{{ action }} User</h2>
+
+<form method="POST" class="col-md-6">
+    <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <input type="text" class="form-control" id="name" name="name" value="{{ user.name if user else '' }}" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email" name="email" value="{{ user.email if user else '' }}"
+            required>
+    </div>
+
+    <div class="mb-3">
+        <label for="password" class="form-label">Password{% if user %} (leave blank to keep current){% endif %}</label>
+        <input type="password" class="form-control" id="password" name="password" {% if not user %}required{% endif %}>
+    </div>
+
+    <div class="mb-3">
+        <label for="role" class="form-label">Role</label>
+        <select class="form-control" id="role" name="role" required>
+            <option value="student" {% if user and user.role=='student' %}selected{% endif %}>Student</option>
+            <option value="faculty" {% if user and user.role=='faculty' %}selected{% endif %}>Faculty</option>
+            <option value="admin" {% if user and user.role=='admin' %}selected{% endif %}>Admin</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">{{ action }}</button>
+    <a href="{{ url_for('admin.manage_users') }}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

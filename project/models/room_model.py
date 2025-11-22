@@ -66,6 +66,28 @@ class Timeslot:
         return slots
 
     @staticmethod
+    def get_timeslot_by_id(slot_id):
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM timeslots WHERE id = %s", (slot_id,))
+        slot = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        return slot
+
+    @staticmethod
+    def update_timeslot(slot_id, date, start, end):
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            "UPDATE timeslots SET slot_date=%s, start_time=%s, end_time=%s WHERE id=%s",
+            (date, start, end, slot_id)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+    @staticmethod
     def add_timeslot(date, start, end):
         conn = get_db_connection()
         cursor = conn.cursor()

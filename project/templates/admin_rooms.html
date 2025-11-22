@@ -45,10 +45,15 @@
             <td>{{ room.room_type }}</td>
             <td>{{ room.location }}</td>
             <td>
-                <form method="POST" onsubmit="return confirm('Are you sure?');">
+                <form method="POST" style="display:inline;" onsubmit="return confirm('Delete this room?');">
                     <input type="hidden" name="delete" value="true">
                     <input type="hidden" name="room_id" value="{{ room.id }}">
                     <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
+                <form method="POST" style="display:inline;" onsubmit="return confirm('Edit this room?');">
+                    <input type="hidden" name="edit" value="true">
+                    <input type="hidden" name="room_id" value="{{ room.id }}">
+                    <button type="submit" class="btn btn-primary btn-sm">Edit</button>
                 </form>
             </td>
         </tr>

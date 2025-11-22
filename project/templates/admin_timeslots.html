@@ -43,11 +43,13 @@
             <td>{{ slot.start_time }}</td>
             <td>{{ slot.end_time }}</td>
             <td>
-                <form method="POST" onsubmit="return confirm('Are you sure?');">
+                <form method="POST" style="display:inline;" onsubmit="return confirm('Delete this slot?');">
                     <input type="hidden" name="delete" value="true">
                     <input type="hidden" name="slot_id" value="{{ slot.id }}">
                     <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                 </form>
+                <a href="{{ url_for('admin.edit_timeslot', slot_id=slot.id) }}" class="btn btn-primary btn-sm"
+                    style="margin-left:4px;">Edit</a>
             </td>
         </tr>
         {% endfor %}

@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2>Edit Timeslot</h2>
+<form method="POST" class="row g-3">
+    <div class="col-md-3">
+        <label class="visually-hidden">Date</label>
+        <input type="date" class="form-control" name="date" value="{{ timeslot.slot_date }}" required>
+    </div>
+    <div class="col-md-3">
+        <label class="visually-hidden">Start Time</label>
+        <input type="time" class="form-control" name="start" value="{{ timeslot.start_time }}" required>
+    </div>
+    <div class="col-md-3">
+        <label class="visually-hidden">End Time</label>
+        <input type="time" class="form-control" name="end" value="{{ timeslot.end_time }}" required>
+    </div>
+    <div class="col-md-3">
+        <button type="submit" class="btn btn-primary w-100">Save</button>
+    </div>
+</form>
+{% endblock %}
