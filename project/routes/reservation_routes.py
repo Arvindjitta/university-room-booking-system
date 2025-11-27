@@ -16,7 +16,73 @@ def login_required(func):
 @reservation_bp.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html')
+    user_id = session['user_id']
+    user_role = session.get('role')
+    
+    # Admin Dashboard
+    if user_role == 'admin':
+        from models.user_model import User
+        
+        # Get all reservations
+        all_reservations = Reservation.get_all_reservations()
+        
+        # Count reservations by status
+        pending_approvals = sum(1 for r in all_reservations if r['status'] == 'pending')
+        approved_count = sum(1 for r in all_reservations if r['status'] == 'approved')
+        rejected_count = sum(1 for r in all_reservations if r['status'] == 'rejected')
+        
+        # Get total counts
+        all_users = User.get_all_users()
+        total_users = len(all_users)
+        
+        all_rooms = Room.get_all_rooms()
+        total_rooms = len(all_rooms)
+        
+        all_timeslots = Timeslot.get_all_timeslots()
+        total_timeslots = len(all_timeslots)
+        
+        # Get recent reservations (last 5)
+        recent_reservations = all_reservations[:5]
+        
+        return render_template('dashboard.html',
+                             is_admin=True,
+                             pending_approvals=pending_approvals,
+                             approved_count=approved_count,
+                             rejected_count=rejected_count,
+                             total_users=total_users,
+                             total_rooms=total_rooms,
+                             total_timeslots=total_timeslots,
+                             recent_reservations=recent_reservations)
+    
+    # Student/Faculty Dashboard
+    else:
+        # Get user's reservations
+        user_reservations = Reservation.get_reservations_by_user(user_id)
+        
+        # Count pending and approved reservations for this user
+        pending_count = sum(1 for r in user_reservations if r['status'] == 'pending')
+        approved_count = sum(1 for r in user_reservations if r['status'] == 'approved')
+        
+        # Get all rooms
+        all_rooms = Room.get_all_rooms()
+        
+        # Filter rooms for students (capacity <= 10)
+        if user_role == 'student':
+            available_rooms = [r for r in all_rooms if r['capacity'] <= 10]
+        else:
+            available_rooms = all_rooms
+        
+        available_rooms_count = len(available_rooms)
+        
+        # Get sample rooms for preview (first 3)
+        sample_rooms = available_rooms[:3] if len(available_rooms) >= 3 else available_rooms
+        
+        return render_template('dashboard.html',
+                             is_admin=False,
+                             pending_count=pending_count,
+                             approved_count=approved_count,
+                             available_rooms_count=available_rooms_count,
+                             sample_rooms=sample_rooms)
 
 @reservation_bp.route('/rooms')
 @login_required

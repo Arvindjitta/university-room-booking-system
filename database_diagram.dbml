@@ -1,0 +1,71 @@
+// University Room & Event Booking System - ER Diagram
+// Copy and paste this code into https://dbdiagram.io/
+
+Table users {
+  id int [pk, increment, note: 'Primary key']
+  name varchar(100) [not null, note: 'User full name']
+  email varchar(100) [unique, not null, note: 'User email for login']
+  password_hash varchar(255) [not null, note: 'Bcrypt hashed password']
+  role enum('student', 'faculty', 'admin') [default: 'student', note: 'User role/permission level']
+  
+  indexes {
+    email [unique]
+  }
+}
+
+Table rooms {
+  id int [pk, increment, note: 'Primary key']
+  room_name varchar(100) [not null, note: 'Name/number of the room']
+  capacity int [not null, note: 'Maximum occupancy']
+  room_type varchar(50) [note: 'Lab, Lecture Hall, Conference Room, etc.']
+  location varchar(100) [note: 'Building and floor information']
+}
+
+Table timeslots {
+  id int [pk, increment, note: 'Primary key']
+  slot_date date [not null, note: 'Date of the timeslot']
+  start_time time [not null, note: 'Start time of the slot']
+  end_time time [not null, note: 'End time of the slot']
+}
+
+Table reservations {
+  id int [pk, increment, note: 'Primary key']
+  user_id int [not null, note: 'User who made the reservation']
+  room_id int [not null, note: 'Room being reserved']
+  timeslot_id int [not null, note: 'Timeslot for the reservation']
+  status enum('pending', 'approved', 'rejected', 'cancelled') [default: 'pending', note: 'Current status of reservation']
+  created_at timestamp [default: `CURRENT_TIMESTAMP`, note: 'When reservation was created']
+  
+  indexes {
+    (room_id, timeslot_id) [unique, note: 'Prevents double booking']
+  }
+}
+
+Table approvals {
+  id int [pk, increment, note: 'Primary key']
+  reservation_id int [not null, note: 'Link to reservation (1:1)']
+  admin_id int [not null, note: 'Admin who approved/rejected']
+  decision enum('approved', 'rejected') [not null, note: 'Admin decision']
+  notes text [note: 'Admin comments/reason']
+  approved_at timestamp [default: `CURRENT_TIMESTAMP`, note: 'When decision was made']
+  
+  indexes {
+    reservation_id [unique]
+  }
+}
+
+// Relationships
+// One user can have many reservations
+Ref: reservations.user_id > users.id
+
+// One room can be reserved multiple times
+Ref: reservations.room_id > rooms.id
+
+// One timeslot can be used for different rooms
+Ref: reservations.timeslot_id > timeslots.id
+
+// One reservation has at most one approval (1:1)
+Ref: approvals.reservation_id - reservations.id
+
+// One admin can approve many reservations
+Ref: approvals.admin_id > users.id

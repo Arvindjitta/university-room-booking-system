@@ -1,16 +1,482 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="jumbotron text-center bg-light p-5 rounded">
-    <h1 class="display-4">Welcome to UniBooking</h1>
-    <p class="lead">The easiest way to book rooms and manage events on campus.</p>
-    <hr class="my-4">
-    {% if session.get('role') == 'admin' %}
-    <p>You have admin privileges. Manage approvals, rooms, and timeslots.</p>
-    <a class="btn btn-primary btn-lg" href="{{ url_for('admin.approvals') }}" role="button">Manage Approvals</a>
+
+{% if is_admin %}
+<!-- ADMIN DASHBOARD -->
+<!-- Welcome Header -->
+<div class="mb-4">
+    <div class="d-flex align-items-center gap-3 mb-2">
+        <h1 class="display-5 fw-bold mb-0">Admin Dashboard 👨‍💼</h1>
+        <span class="badge bg-danger-subtle text-danger px-3 py-2" style="font-size: 0.9rem;">Administrator</span>
+    </div>
+    <p class="text-muted fs-5">Manage and monitor all system activities</p>
+</div>
+
+<!-- Admin Stats Cards -->
+<div class="row g-4 mb-5">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #dc3545 !important;">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted text-uppercase mb-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                            Pending Approvals</h6>
+                        <h2 class="fw-bold mb-0 text-danger">{{ pending_approvals }}</h2>
+                    </div>
+                    <div class="bg-danger bg-opacity-10 rounded-3 p-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#dc3545"
+                            viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                            <path
+                                d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #0d6efd !important;">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted text-uppercase mb-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                            Total Users</h6>
+                        <h2 class="fw-bold mb-0 text-primary">{{ total_users }}</h2>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 rounded-3 p-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#0d6efd"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216Z" />
+                            <path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #198754 !important;">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted text-uppercase mb-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                            Total Rooms</h6>
+                        <h2 class="fw-bold mb-0 text-success">{{ total_rooms }}</h2>
+                    </div>
+                    <div class="bg-success bg-opacity-10 rounded-3 p-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#198754"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #ffc107 !important;">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted text-uppercase mb-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                            Timeslots</h6>
+                        <h2 class="fw-bold mb-0 text-warning">{{ total_timeslots }}</h2>
+                    </div>
+                    <div class="bg-warning bg-opacity-10 rounded-3 p-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#ffc107"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z" />
+                            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Admin Quick Actions -->
+<div class="row g-4 mb-5">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100 hover-lift">
+            <div class="card-body p-4 text-center">
+                <div class="bg-danger bg-opacity-10 rounded-3 p-3 mb-3 d-inline-block">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#dc3545" viewBox="0 0 16 16">
+                        <path
+                            d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z" />
+                    </svg>
+                </div>
+                <h6 class="fw-bold mb-2">Approvals</h6>
+                <p class="text-muted small mb-3">Review pending requests</p>
+                <a href="{{ url_for('admin.approvals') }}" class="btn btn-danger btn-sm w-100">Manage</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100 hover-lift">
+            <div class="card-body p-4 text-center">
+                <div class="bg-primary bg-opacity-10 rounded-3 p-3 mb-3 d-inline-block">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#0d6efd" viewBox="0 0 16 16">
+                        <path
+                            d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8Zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022ZM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816ZM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0Zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z" />
+                    </svg>
+                </div>
+                <h6 class="fw-bold mb-2">Users</h6>
+                <p class="text-muted small mb-3">Manage user accounts</p>
+                <a href="{{ url_for('admin.manage_users') }}" class="btn btn-primary btn-sm w-100">Manage</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100 hover-lift">
+            <div class="card-body p-4 text-center">
+                <div class="bg-success bg-opacity-10 rounded-3 p-3 mb-3 d-inline-block">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#198754" viewBox="0 0 16 16">
+                        <path
+                            d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5z" />
+                    </svg>
+                </div>
+                <h6 class="fw-bold mb-2">Rooms</h6>
+                <p class="text-muted small mb-3">Add & edit rooms</p>
+                <a href="{{ url_for('admin.manage_rooms') }}" class="btn btn-success btn-sm w-100">Manage</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100 hover-lift">
+            <div class="card-body p-4 text-center">
+                <div class="bg-warning bg-opacity-10 rounded-3 p-3 mb-3 d-inline-block">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#ffc107" viewBox="0 0 16 16">
+                        <path
+                            d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z" />
+                        <path
+                            d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z" />
+                    </svg>
+                </div>
+                <h6 class="fw-bold mb-2">Timeslots</h6>
+                <p class="text-muted small mb-3">Schedule time periods</p>
+                <a href="{{ url_for('admin.manage_timeslots') }}" class="btn btn-warning btn-sm w-100">Manage</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Reservations -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white border-0 pt-4 px-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-1 fw-bold">Recent Reservations</h4>
+                <p class="mb-0 text-muted">Latest booking requests</p>
+            </div>
+            <a href="{{ url_for('admin.approvals') }}" class="btn btn-outline-primary">View All</a>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        {% if recent_reservations %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="px-4 py-3">User</th>
+                        <th class="px-4 py-3">Room</th>
+                        <th class="px-4 py-3">Date</th>
+                        <th class="px-4 py-3">Time</th>
+                        <th class="px-4 py-3">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reservation in recent_reservations %}
+                    <tr>
+                        <td class="px-4 py-3">{{ reservation.user_name }}</td>
+                        <td class="px-4 py-3">{{ reservation.room_name }}</td>
+                        <td class="px-4 py-3">{{ reservation.slot_date }}</td>
+                        <td class="px-4 py-3">{{ reservation.start_time }} - {{ reservation.end_time }}</td>
+                        <td class="px-4 py-3">
+                            {% if reservation.status == 'pending' %}
+                            <span class="badge bg-warning-subtle text-warning">Pending</span>
+                            {% elif reservation.status == 'approved' %}
+                            <span class="badge bg-success-subtle text-success">Approved</span>
+                            {% elif reservation.status == 'rejected' %}
+                            <span class="badge bg-danger-subtle text-danger">Rejected</span>
+                            {% else %}
+                            <span class="badge bg-secondary-subtle text-secondary">{{ reservation.status }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <p class="text-muted mb-0">No reservations yet</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% else %}
+<!-- STUDENT/FACULTY DASHBOARD -->
+<!-- Welcome Header -->
+<div class="mb-4">
+    <div class="d-flex align-items-center gap-3 mb-2">
+        <h1 class="display-5 fw-bold mb-0">Welcome back, {{ session.get('user_name') }}! 👋</h1>
+        {% if session.get('role') == 'faculty' %}
+        <span class="badge bg-success-subtle text-success px-3 py-2" style="font-size: 0.9rem;">Faculty</span>
+        {% elif session.get('role') == 'student' %}
+        <span class="badge bg-primary-subtle text-primary px-3 py-2" style="font-size: 0.9rem;">Student</span>
+        {% endif %}
+    </div>
+    {% if session.get('role') == 'faculty' %}
+    <p class="text-muted fs-5">Access all rooms and priority booking features</p>
     {% else %}
-    <p>Browse available rooms and make a reservation today.</p>
-    <a class="btn btn-primary btn-lg" href="{{ url_for('reservation.reserve') }}" role="button">Book a Room</a>
+    <p class="text-muted fs-5">Here's what's happening with your bookings today</p>
     {% endif %}
 </div>
+
+<!-- Quick Stats Cards -->
+<div class="row g-4 mb-5">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #0d6efd !important;">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted text-uppercase mb-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                            Pending Requests</h6>
+                        <h2 class="fw-bold mb-0 text-primary">{{ pending_count }}</h2>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 rounded-3 p-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#0d6efd"
+                            viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                            <path
+                                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #198754 !important;">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted text-uppercase mb-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                            Approved Bookings</h6>
+                        <h2 class="fw-bold mb-0 text-success">{{ approved_count }}</h2>
+                    </div>
+                    <div class="bg-success bg-opacity-10 rounded-3 p-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#198754"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #ffc107 !important;">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted text-uppercase mb-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                            Available Rooms</h6>
+                        <h2 class="fw-bold mb-0 text-warning">{{ available_rooms_count }}</h2>
+                    </div>
+                    <div class="bg-warning bg-opacity-10 rounded-3 p-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#ffc107"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row g-4 mb-5">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100 hover-lift">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-primary bg-opacity-10 rounded-3 p-3 me-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#0d6efd"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z" />
+                            <path
+                                d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h5 class="mb-1 fw-bold">Book a Room</h5>
+                        {% if session.get('role') == 'faculty' %}
+                        <p class="mb-0 text-muted">Access all rooms - no capacity restrictions</p>
+                        {% else %}
+                        <p class="mb-0 text-muted">Reserve your space in just a few clicks</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <a href="{{ url_for('reservation.reserve') }}" class="btn btn-primary w-100">Start Booking</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100 hover-lift">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-success bg-opacity-10 rounded-3 p-3 me-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#198754"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h5 class="mb-1 fw-bold">My Reservations</h5>
+                        <p class="mb-0 text-muted">View and manage your bookings</p>
+                    </div>
+                </div>
+                <a href="{{ url_for('reservation.my_reservations') }}" class="btn btn-success w-100">View Bookings</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Browse Rooms Section -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white border-0 pt-4 px-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-1 fw-bold">Browse Available Rooms</h4>
+                <p class="mb-0 text-muted">Find the perfect space for your needs</p>
+            </div>
+            <a href="{{ url_for('reservation.rooms') }}" class="btn btn-outline-primary">View All</a>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        {% if sample_rooms %}
+        <div class="row g-3">
+            {% for room in sample_rooms %}
+            <div class="col-md-4">
+                <div class="p-3 border rounded-3 h-100 hover-bg">
+                    <div class="d-flex align-items-center mb-2">
+                        {% if room.room_type == 'Lecture Hall' %}
+                        <span class="badge bg-primary-subtle text-primary me-2">{{ room.room_type }}</span>
+                        {% elif room.room_type == 'Computer Lab' or room.room_type == 'Lab' %}
+                        <span class="badge bg-info-subtle text-info me-2">{{ room.room_type }}</span>
+                        {% elif room.room_type == 'Conference Room' %}
+                        <span class="badge bg-warning-subtle text-warning me-2">{{ room.room_type }}</span>
+                        {% else %}
+                        <span class="badge bg-secondary-subtle text-secondary me-2">{{ room.room_type }}</span>
+                        {% endif %}
+                        <small class="text-muted">{{ room.capacity }} seats</small>
+                    </div>
+                    <h6 class="fw-bold mb-1">{{ room.room_name }}</h6>
+                    <p class="text-muted small mb-2">{{ room.location }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-success-subtle text-success">Available</span>
+                        <a href="{{ url_for('reservation.reserve') }}" class="btn btn-sm btn-outline-primary">Book
+                            Now</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-4">
+            <p class="text-muted mb-0">
+                {% if session.get('role') == 'student' %}
+                No rooms available for students at this time. (Rooms with 10 or fewer seats)
+                {% else %}
+                No rooms available at this time.
+                {% endif %}
+            </p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Help Section -->
+<div class="card border-0 bg-light">
+    <div class="card-body p-4 text-center">
+        <h5 class="fw-bold mb-2">Need Help?</h5>
+        <p class="text-muted mb-3">Check out our quick guide to get started with room bookings</p>
+        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#helpModal">View Guide</button>
+    </div>
+</div>
+
+<!-- Help Modal -->
+<div class="modal fade" id="helpModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Quick Start Guide</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <h6 class="fw-bold">1. Browse Rooms</h6>
+                    <p class="text-muted small mb-0">View all available rooms and their details</p>
+                </div>
+                <div class="mb-3">
+                    <h6 class="fw-bold">2. Select Time Slot</h6>
+                    <p class="text-muted small mb-0">Choose your preferred date and time</p>
+                </div>
+                <div class="mb-3">
+                    <h6 class="fw-bold">3. Submit Request</h6>
+                    <p class="text-muted small mb-0">Fill in your details and submit for approval</p>
+                </div>
+                <div>
+                    <h6 class="fw-bold">4. Wait for Approval</h6>
+                    <p class="text-muted small mb-0">Admin will review and approve your booking</p>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">Got it!</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-lift {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .hover-bg {
+        transition: background-color 0.2s ease;
+    }
+
+    .hover-bg:hover {
+        background-color: #f8f9fa;
+    }
+</style>
+{% endif %}
 {% endblock %}
